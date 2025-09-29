@@ -29,15 +29,7 @@ let token = null;
 
 beforeAll(async () => {
   await User.deleteMany({});
-  await api.post("/api/users/signup").send({
-    name: "John Doe",
-    email: "john@example.com",
-    password: "R3g5T7#gh",
-    phone_number: "09-123-47890",
-    date_of_birth: "1999-01-01",
-    membership_status: "Active",
-    gender: "Male",
-  }); // create one user
+  await api.post("/api/users/signup").send(users[0]); // create one user
 });
 
 describe("User Routes", () => {
@@ -48,6 +40,7 @@ describe("User Routes", () => {
         email: "test@example.com",
         phone_number: "09-123-47890",
         gender: "Male",
+        password: "R3g5T7#gh",
         date_of_birth: "1999-01-01",
         membership_status: "Active",
       };
