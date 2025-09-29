@@ -25,13 +25,18 @@ const jobs = [
     },
   },
   {
-    title: "London in 7 Days Job",
-    description: "Explore the best of London in 7 days with our expert guides.",
-    image: "https://www.course-api.com/images/tours/job-2.jpeg",
-    price: "2195",
+    title: "Web Developer",
+    type: "Full-time",
+    description:
+      "We are looking for a Web Developer to join our team. You will be responsible for designing and implementing the backend of our web application.",
+    company: {
+      name: "EFG Company",
+      contactEmail: "2vgio@example.com",
+      contactPhone: "123-456-7890",
+    },
   },
 ];
- 
+
 let token = null;
 
 beforeAll(async () => {
@@ -72,24 +77,29 @@ describe("Given there are initially some jobs saved", () => {
   });
 
   it("should create one job when POST /api/jobs is called", async () => {
-    const newTour = {
-      name: "Paris in 3 Days Job",
-      info: "Experience the beauty of Paris in just 3 days.",
-      image: "https://www.course-api.com/images/tours/job-3.jpeg",
-      price: "1500",
+    const newJob = {
+      title: "Backend Developer",
+      type: "Full-time",
+      description:
+        "We are looking for a Backend Developer to join our team. You will be responsible for designing and implementing the backend of our web application.",
+      company: {
+        name: "ABC Company",
+        contactEmail: "2FQYK@example.com",
+        contactPhone: "123-456-7890",
+      },
     };
     await api
       .post("/api/jobs")
       .set("Authorization", "bearer " + token)
       .expect("Content-Type", /application\/json/)
-      .send(newTour)
+      .send(newJob)
       .expect(201);
   });
 
   it("should return one job by ID when GET /api/jobs/:id is called", async () => {
     const job = await Job.findOne();
     await api
-      .get(`/api/jobs/${job._id}`)
+      .get("/api/jobs/" + job._id)
       .set("Authorization", "bearer " + token)
       .expect(200)
       .expect("Content-Type", /application\/json/);
@@ -97,35 +107,40 @@ describe("Given there are initially some jobs saved", () => {
 
   it("should update one job by ID when PUT /api/jobs/:id is called", async () => {
     const job = await Job.findOne();
-    const updatedTour = {
-      info: "Updated job information.",
-      salary: 2000,
+    const updatedJob = {
+      title: "Web Developer",
+      type: "Full-time",
+      description:
+        "We are looking for a Web Developer to join our team. You will be responsible for designing and implementing the backend of our web application.",
+      company: {
+        name: "EFG Company",
+        contactEmail: "2vgio@example.com",
+        contactPhone: "123-456-7890",
+      },
     };
     const response = await api
       .put(`/api/jobs/${job._id}`)
       .set("Authorization", "bearer " + token)
-      .send(updatedTour)
+      .send(updatedJob)
       .expect(200)
       .expect("Content-Type", /application\/json/);
-  
+
     console.log("Response body:", response.body);
-  
-    const updatedTourCheck = await Job.findById(job._id);
-    console.log("Updated job:", updatedTourCheck);
-  
-    expect(updatedTourCheck.info).toBe(updatedTour.info);
-    expect(updatedTourCheck.price).toBe(updatedTour.price);
+
+    const updatedJobCheck = await Job.findById(job._id);
+    console.log("Updated job:", updatedJobCheck);
+
+    expect(updatedJobCheck.info).toBe(updatedJob.info);
   });
-  
 
   it("should delete one job by ID when DELETE /api/jobs/:id is called", async () => {
     const job = await Job.findOne();
     await api
-      .delete("/api/jobs/" + job._id)
+      .delete(`/api/jobs/${job._id}`)
       .set("Authorization", "bearer " + token)
       .expect(204);
-    const tourCheck = await Job.findById(job._id);
-    expect(tourCheck).toBeNull();
+    const jobCheck = await Job.findById(job._id);
+    expect(jobCheck).toBeNull();
   });
 });
 
