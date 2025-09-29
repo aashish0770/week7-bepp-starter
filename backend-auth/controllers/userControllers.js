@@ -60,7 +60,7 @@ const signupUser = async (req, res) => {
 
     if (user) {
       // console.log(user._id);
-     const token = generateToken(user._id);
+      const token = generateToken(user._id);
       res.status(201).json({ email, token });
     } else {
       res.status(400);
@@ -82,7 +82,14 @@ const loginUser = async (req, res) => {
 
     if (user && (await bcrypt.compare(password, user.password))) {
       const token = generateToken(user._id);
-      res.status(200).json({ email, token });
+      res.status(200).json({
+        token,
+        user: {
+          _id: user._id,
+          name: user.name,
+          email: user.email,
+        },
+      });
     } else {
       res.status(400);
       throw new Error("Invalid credentials");
@@ -103,8 +110,37 @@ const getMe = async (req, res) => {
   }
 };
 
+// @desc    Update user
+// @route   PATCH /api/users/me
+// @access  Private
+const updateMe = async (req, res) => {
+  try {
+    const updates = req.body;
+    const user = await User.findByIdAndUpdate(req.user._id, updates, {
+      new: true,
+    }).select("-password");
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+// @desc    Delete user
+// @route   DELETE /api/users/me
+// @access  Private
+const deleteMe = async (req, res) => {
+  try {
+    await User.findByIdAndDelete(req.user._id);
+    res.status(204).end();
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
 module.exports = {
   signupUser,
   loginUser,
   getMe,
+  updateMe,
+  deleteMe,
 };

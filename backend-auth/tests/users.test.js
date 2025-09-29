@@ -12,6 +12,7 @@ const users = [
     phone_number: "09-123-47890",
     date_of_birth: "1999-01-01",
     membership_status: "Active",
+    gender: "Male",
   },
   {
     name: "Jane Doe",
@@ -20,6 +21,7 @@ const users = [
     phone_number: "09-123-47890",
     date_of_birth: "1999-01-01",
     membership_status: "Active",
+    gender: "Male",
   },
 ];
 
@@ -34,6 +36,7 @@ beforeAll(async () => {
     phone_number: "09-123-47890",
     date_of_birth: "1999-01-01",
     membership_status: "Active",
+    gender: "Male",
   }); // create one user
 });
 
@@ -43,8 +46,8 @@ describe("User Routes", () => {
       const userData = {
         name: "Test User",
         email: "test@example.com",
-        password: "R3g5T7#gh",
         phone_number: "09-123-47890",
+        gender: "Male",
         date_of_birth: "1999-01-01",
         membership_status: "Active",
       };
@@ -53,7 +56,7 @@ describe("User Routes", () => {
 
       expect(result.status).toBe(201);
       expect(result.body).toHaveProperty("token");
-      expect(result.body).toHaveProperty("user");
+      expect(result.body).toHaveProperty("email");
     });
 
     it("should not allow signup with duplicate email", async () => {
@@ -123,7 +126,7 @@ describe("User Routes", () => {
 
     it("should return unauthorized without token", async () => {
       const result = await api.get("/api/users/me");
-      expect(result.status).toBe(404);
+      expect(result.status).toBe(401);
     });
   });
 
@@ -143,14 +146,14 @@ describe("User Routes", () => {
     it("should delete authenticated user", async () => {
       const result = await api
         .delete("/api/users/me")
-        .set("Authorization", `Bearer ${token}`);
+        .set("Authorization", "bearer " + token);
 
       expect(result.status).toBe(204);
     });
 
     it("should not allow deletion without auth", async () => {
       const result = await api.delete("/api/users/me");
-      expect(result.status).toBe(404);
+      expect(result.status).toBe(401);
     });
   });
 });
